@@ -4,7 +4,7 @@ node {
     try {
         stage('Build') {
             docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
-                sh './mvnw clean package'
+                sh 'mvn clean package'
             }
         }
 
