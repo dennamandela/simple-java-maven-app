@@ -9,13 +9,13 @@ node {
         }
 
         stage('Build') {
-            docker.image(mavenImage).inside('-v G:/simple-java-maven-app:/root/app') {
+            docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/root/app') {
                 sh 'cd /root/app && mvn -B -DskipTests clean package'
             }
         }
 
         stage('Test') {
-            docker.image(mavenImage).inside('-v G:/simple-java-maven-app:/root/app') {
+            docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/root/app') {
                 sh 'cd /root/app && mvn test'
                 junit '/root/app/target/surefire-reports/*.xml'
             }
