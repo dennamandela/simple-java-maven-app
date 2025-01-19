@@ -1,25 +1,21 @@
 node {
-    try {
+    def mavenImage = 'maven:3.9.0'
 
+    try {
         stage('Build') {
-            sh 'mvn clean install'
+            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
+                sh 'mvn -B -DskipTests clean package'
+            }
         }
+
         stage('Test') {
-            sh 'mvn test'
+            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
+                sh 'mvn test'
+                junit 'target/surefire-reports/*.xml'
+            }
         }
-        stage('Package') {
-            sh 'mvn package'
-        }
-        currentBuild.result = 'SUCCESS'
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
         throw e
-    } finally {
-        // Post build actions
-        if (currentBuild.result == 'SUCCESS') {
-            echo 'CI Build and Test succeeded!'
-        } else {
-            echo 'CI Build or Test failed!'
-        }
     }
 }
