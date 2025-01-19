@@ -10,8 +10,9 @@ node {
 
         stage('Build') {
             docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/app') {
+                sh 'chmod -R 777 /app'  // Set permissions for the app directory
                 sh 'ls -la /app'
-                sh 'cd /app && mvn -B -DskipTests clean package'
+                sh 'cd /app && mvn -B -Dmaven.repo.local=/app/.m2/repository -DskipTests clean package'
             }
         }
 
