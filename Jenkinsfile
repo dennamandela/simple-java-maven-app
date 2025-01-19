@@ -10,14 +10,15 @@ node {
 
         stage('Build') {
             docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/root/app') {
-                sh 'cd /root/app && mvn -B -DskipTests clean package'
+                sh 'ls -la /app'
+                sh 'cd /app && mvn -B -DskipTests clean package'
             }
         }
 
         stage('Test') {
             docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/root/app') {
-                sh 'cd /root/app && mvn test'
-                junit '/root/app/target/surefire-reports/*.xml'
+                sh 'cd /app && mvn test'
+                junit '/app/target/surefire-reports/*.xml'
             }
         }
     } catch (Exception e) {
