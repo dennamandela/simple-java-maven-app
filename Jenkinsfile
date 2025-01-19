@@ -7,16 +7,21 @@ node {
             sh 'pwd'
             sh 'ls -la'
         }
+
         stage('Build') {
-            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
-                sh 'mvn clean package'
+            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2 -v $(pwd):/workspace') {
+                dir('simple-java-maven-app') {
+                    sh 'mvn -B -DskipTests clean package'
+                }
             }
         }
 
         stage('Test') {
-            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
-                sh 'mvn test'
-                junit 'target/surefire-reports/*.xml'
+            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2 -v $(pwd):/workspace') {
+                dir('simple-java-maven-app') {
+                    sh 'mvn test'
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
     } catch (Exception e) {
