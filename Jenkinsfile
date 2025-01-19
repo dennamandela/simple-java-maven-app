@@ -9,7 +9,7 @@ node {
         }
 
         stage('Build') {
-            docker.image(mavenImage).insideinside('-v //g/simple-java-maven-app:/app') {
+            docker.image(mavenImage).inside('-v //g/simple-java-maven-app:/app') {
                 sh 'ls -la /app'
                 sh 'cd /app && mvn -B -DskipTests clean package'
             }
